@@ -17,16 +17,20 @@ public class ReceiptController {
     private ReceiptService receiptService;
 
     @PostMapping("/process")
-    public ResponseEntity<ResponseID> processReceipt(@RequestBody Receipt receipt) {
-        Receipt newReceipt = receipt;
+    public ResponseEntity<?> processReceipt(@RequestBody Receipt receipt) {
+        try {
+            Receipt newReceipt = receipt;
 
-        String  uuid = receiptService.saveReceipt(newReceipt);
+            String  uuid = receiptService.saveReceipt(newReceipt);
 
-        // Create a ResponseID object with the UUID
-        ResponseID responseID = new ResponseID();
-        responseID.setId(uuid);
+            // Create a ResponseID object with the UUID
+            ResponseID responseID = new ResponseID();
+            responseID.setId(uuid);
 
-        return new ResponseEntity<>(responseID, HttpStatus.OK);
+            return new ResponseEntity<>(responseID, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("The receipt is invalid", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}/points")

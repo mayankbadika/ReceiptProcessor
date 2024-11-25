@@ -21,7 +21,10 @@ public class ReceiptService {
     private ConcurrentHashMap<String, Integer> pointsDB= new ConcurrentHashMap<>();
     // In-memory store for processed receipts
     private ConcurrentHashMap<Receipt, String> receiptStore = new ConcurrentHashMap<>();
-    public String saveReceipt(Receipt receipt) {
+    
+    public String saveReceipt(Receipt receipt) throws Exception {
+
+        if (receipt.isEmpty()) throw new Exception("UUID not found");
         // Check if the receipt already exists
         if (receiptStore.containsKey(receipt)) {
             // Return the existing UUID

@@ -69,4 +69,13 @@ public class Receipt {
     public int hashCode() {
         return Objects.hash(retailer, purchaseDate, purchaseTime, total); // Generate hash based on the same fields
     }
+
+    public boolean isEmpty() {
+        return (retailer == null || retailer.isBlank()) &&
+                purchaseDate == null &&
+                purchaseTime == null &&
+                (items == null || items.isEmpty()) &&
+                (total == 0.0);
+    }
+
 }

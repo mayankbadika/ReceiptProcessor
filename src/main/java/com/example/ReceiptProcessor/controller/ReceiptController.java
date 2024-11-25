@@ -40,7 +40,7 @@ public class ReceiptController {
             return new ResponseEntity<>(responsePoints, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("UUID not found: " + id);
+                    .body("No receipt found for that id: " + id);
         }
     }
 }

@@ -2,7 +2,7 @@ package com.example.ReceiptProcessor.models;
 
 public class Items {
     private String shortDescription;
-    private Double price;
+    private double price;
 
     public String getShortDescription() {
         return shortDescription.trim();

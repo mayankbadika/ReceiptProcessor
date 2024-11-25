@@ -44,28 +44,34 @@ public class ReceiptService {
         //One point for every alphanumeric character in the retailer name.
         points += calculateAlphaNumericChar(receipt.getRetailer());
 
-        //50 points if the total is a round dollar amount with no cents.
-        if(receipt.getTotal() % 1 == 0) points += 50;
+        if(receipt.getTotal() > 0) {
+            //50 points if the total is a round dollar amount with no cents.
+            if(receipt.getTotal() % 1 == 0) points += 50;
 
-        //25 points if the total is a multiple of 0.25.
-        if(receipt.getTotal()*4 % 1 == 0) points += 25;
+            //25 points if the total is a multiple of 0.25.
+            if(receipt.getTotal()*4 % 1 == 0) points += 25;
+        }
 
-        //5 points for every two items on the receipt.
-        points += (5 * pointForItems(receipt.getItems())/2);
+        if(receipt.getItems() != null) {
+            //5 points for every two items on the receipt.
+            points += (5 * pointForItems(receipt.getItems())/2);
 
-        //If the trimmed length of the item description is a multiple of 3,
-        //multiply the price by 0.2 and round up to the nearest integer. The result is the number of points earned.
-        points += pointsforItemDesc(receipt.getItems());
+            //If the trimmed length of the item description is a multiple of 3,
+            //multiply the price by 0.2 and round up to the nearest integer. The result is the number of points earned.
+            points += pointsforItemDesc(receipt.getItems());
+        }
 
-        //6 points if the day in the purchase date is odd.
-        LocalDate purchaseDate = receipt.getPurchaseDate();
-        if(purchaseDate.getDayOfMonth() %2 != 0) points += 6;
+        if(receipt.getPurchaseDate() != null && receipt.getPurchaseTime() != null) {
+            //6 points if the day in the purchase date is odd.
+            LocalDate purchaseDate = receipt.getPurchaseDate();
+            if(purchaseDate.getDayOfMonth() %2 != 0) points += 6;
 
-        //10 points if the time of purchase is after 2:00pm and before 4:00pm.
-        LocalTime purchaseTime = receipt.getPurchaseTime();
-        int hour = purchaseTime.getHour();
+            //10 points if the time of purchase is after 2:00pm and before 4:00pm.
+            LocalTime purchaseTime = receipt.getPurchaseTime();
+            int hour = purchaseTime.getHour();
 
-        if(hour >= 14 && hour < 16) points += 10;
+            if(hour >= 14 && hour < 16) points += 10;
+        }
 
         pointsDB.put(uuid, points);
     }
@@ -79,6 +85,8 @@ public class ReceiptService {
     }
 
     private int calculateAlphaNumericChar(String s) {
+        if(s == null || s.length() == 0) return 0;
+
         int count = 0;
         for(char c : s.toCharArray()) {
             if(Character.isLetterOrDigit(c)) count++;
@@ -88,7 +96,6 @@ public class ReceiptService {
     }
 
     private int pointForItems(List<Items> items) {
-
         if (items.size() % 2 == 0) {
             return items.size();
         } else {

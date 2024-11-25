@@ -12,7 +12,7 @@ public class Receipt {
 
     private List<Items> items;
 
-    private Double total;
+    private double total;
 
     public String getRetailer() {
         return retailer;

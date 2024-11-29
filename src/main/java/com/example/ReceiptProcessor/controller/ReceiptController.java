@@ -1,5 +1,6 @@
 package com.example.ReceiptProcessor.controller;
 
+import com.example.ReceiptProcessor.config.WebSocketHandler;
 import com.example.ReceiptProcessor.models.Receipt;
 import com.example.ReceiptProcessor.models.ResponseID;
 import com.example.ReceiptProcessor.models.ResponsePoints;
@@ -16,16 +17,23 @@ public class ReceiptController {
     @Autowired
     private ReceiptService receiptService;
 
+    @Autowired
+    private WebSocketHandler webSocketHandler;
+
     @PostMapping("/process")
     public ResponseEntity<?> processReceipt(@RequestBody Receipt receipt) {
         try {
             Receipt newReceipt = receipt;
+            System.out.println("controller thread = "+ Thread.currentThread().getName());
 
             String  uuid = receiptService.saveReceipt(newReceipt);
 
             // Create a ResponseID object with the UUID
             ResponseID responseID = new ResponseID();
             responseID.setId(uuid);
+
+            // Asynchronously broadcast the update (this is a non-blocking task)
+            webSocketHandler.broadcast("receipt uploaded");
 
             return new ResponseEntity<>(responseID, HttpStatus.OK);
         } catch (Exception e) {
